@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 //Test GUI
@@ -21,7 +24,7 @@ public class minesweeper{
 
     public static int totalmines = mf.returnMines();
 
-    //universal label for status report
+    //universal label for status report (win/lose)
     static JLabel label = new JLabel();
 
     public static void main(String[] args){
@@ -43,16 +46,16 @@ public class minesweeper{
                     public void actionPerformed(ActionEvent event) { //field button clicked
                         if (digBool == true){
                             guiDig(event.getSource(),xCoordFinal,yCoordFinal);
-                            this.setEnabled(false); //disable button when clicked, NOT DEBUGGING
+                            this.setEnabled(false); //disable button when clicked, not a debugging function!
                         } else {
                             guiFlag(event.getSource(),xCoordFinal,yCoordFinal);
                         }
                     }
                 });
-                fieldButton[xCoordFinal][yCoordFinal].setName(name);
 
-                fieldButton[xCoordFinal][yCoordFinal].setBounds(x,y,90,90);//x axis, y axis, width, height
-                f.add(fieldButton[xCoordFinal][yCoordFinal]);//adding button in JFrame
+                fieldButton[xCoordFinal][yCoordFinal].setName(name);
+                fieldButton[xCoordFinal][yCoordFinal].setBounds(x,y,90,90);
+                f.add(fieldButton[xCoordFinal][yCoordFinal]);
                 yCoord++;
             }
             yCoord = 0;
@@ -108,12 +111,16 @@ public class minesweeper{
 
 
         int delay = 1;
-        ActionListener checkWin = (new ActionListener(){ //check for win in background
+        ActionListener checkWin = new ActionListener(){ //check for win in background
             @Override
             public void actionPerformed(ActionEvent arg0) {
+                int flagged = 0;
                 boolean mines = true;
                 for(int i = 0; i < 8; i++){ //check if all mines flagged
                     for(int x = 0; x < 8; x++){
+                        if((mf.displayField[x][i].equals("Flag"))){
+                            flagged++;
+                        }
                         if(mf.playField[x][i] == 9){
                             if(!(mf.displayField[x][i].equals("Flag"))){
                                 mines = false;
@@ -121,13 +128,13 @@ public class minesweeper{
                         }
                     }
                 }
-                if (mines){
-                    wongame(); //if enabled, insta win. If not enabled, cannot win?
+                if (mines && flagged == 10){
+                    wongame();
                 }
             }
-        });
+        };
 
-        new Timer(delay, checkWin).start(); //autowin at beginning is due to this
+        new Timer(delay, checkWin).start();
 
 
 
@@ -135,14 +142,34 @@ public class minesweeper{
         label.setBounds(800, 135, 300, 45);
         f.add(label);
 
+        //algorithm test buttons
+        JButton basicButton = new JButton("Basic");
+        basicButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<Integer[]> results = basicAI.findBest(getVisible());
+                Integer action = results.get(0)[0];
+
+                if(action == 11){
+
+                } else if (action == 10){
+
+                }
+
+            }
+        });
+        basicButton.setBounds(900,190,90,50);
+        f.add(basicButton);
+
 
 
         f.setSize(1000,1000);
         f.setLayout(null);//using no layout managers
         f.setVisible(true);//making the frame visible
-        reset();
+        reset(); //if no reset, starts off in won state.
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
 
     public static void initMF(){
         mf.boolFieldGen();
@@ -150,21 +177,13 @@ public class minesweeper{
         mf.playFieldGen();
         mf.digFieldGen();
         mf.displayFieldGen();
-
         gameInProgress = true;
     }
-
-
-
-
 
     public static void guiDig(Object buton, int x, int y){
         JButton button = (JButton) buton;
         boolean diggable = mf.getDigField(x,y);
         int value = mf.getPlayField(x,y);
-
-
-
 
         if (diggable == false){
 
@@ -194,7 +213,7 @@ public class minesweeper{
                     catch (IndexOutOfBoundsException e) {
                     }
                 }
-            } //set display to be space for zero, number otherwise.
+            }
         }
     }
 
@@ -262,5 +281,22 @@ public class minesweeper{
             }
         }
 
+    }
+
+    //algorithm code
+    public static String[][] getVisible() {
+        String[][] visField = new String[8][8];
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 8; x++) {
+                if (fieldButton[x][y].getText() == "" || fieldButton[x][y].getText() == null){
+                    visField[x][y] = "B";
+                } else if (fieldButton[x][y].getText() == "Flag") {
+                    visField[x][y] = "F";
+                } else {
+                    visField[x][y] = fieldButton[x][y].getText();
+                }
+            }
+        }
+        return visField;
     }
 }
