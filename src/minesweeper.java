@@ -147,14 +147,40 @@ public class minesweeper{
         basicButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Integer[]> results = basicAI.findBest(getVisible());
-                Integer action = results.get(0)[0];
+                for (Integer[] i :basicAI.findBest(getVisible())) {
+                    JButton button = fieldButton[i[0]][i[1]];
+                    guiFlag(button,i[0],i[1]);
+                    button.setEnabled(false);
 
-                if(action == 11){
 
-                } else if (action == 10){
+                    /*  //THIS IS FOR FLASHING THE BUTTON IMPLEMENT IF SUFFICIENT TIME LEFT
+                    Color fore = button.getForeground();
+
+                    button.setForeground(Color.BLUE);
+                    button.setOpaque(true);
+                    button.setBorderPainted(false);
+
+
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
+
+                    button.setForeground(fore);
+                    button.setOpaque(true);
+                    button.setBorderPainted(false);
+
+    */
+
+                    /*
+                    for (Integer k : i) {
+                        System.out.println(k);
+                    }
+                    */
 
                 }
+
 
             }
         });

@@ -16,20 +16,11 @@ public class basicAI {
                 if(getSpaceCount(x,y, currentState) == Integer.parseInt(currentState[x][y])
                         && getFlagCount(x,y,currentState) == 0
                         && Integer.parseInt(currentState[x][y]) != 0) {  //grid with no mines around and open spaces == number
-                    Integer[] temp = new Integer[1];
-                    temp[0]= 11;
-                    select.add(temp); //show to flag
-                    select.add(getSpaceLoc(x,y,currentState).get(0));
-                    select.add(getSpaceLoc(x,y,currentState).get(1));
+                    select = getSpaceLoc(x,y,currentState);
 
-                }
-                else if(Integer.parseInt(currentState[x][y]) == getFlagCount(x, y, currentState))
-                { //grid with equal flag count means all rest are not mines
-                    Integer[] temp = new Integer[1];
-                    temp[0]= 10;
-                    select.add(temp); //show to dig
-                    select.add(getSpaceLoc(x,y,currentState).get(0));
-                    select.add(getSpaceLoc(x,y,currentState).get(1));
+
+                } else {
+                    //NO ELSE FOR NOW
                 }
             }
 
