@@ -30,6 +30,9 @@ public class minesweeper {
     public static void main(String[] args) {
         initGUI();
         initMF();
+        JOptionPane.showMessageDialog(null, "Press the Digging/Flagging button to toggle between dig and flag\n " +
+                "The check for winning the game is fixed weirdly (see the Timer in init GUI), likely works for most, if not all, cases.\n" +
+                "Note: Press basic button to engage AI for one rep. AI may glitch out on flags, if so manual flag.",  "Instructions/Warning", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void initGUI() {
@@ -114,22 +117,17 @@ public class minesweeper {
         ActionListener checkWin = new ActionListener() { //check for win in background, somehow broke?
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                int flagged = 0;
-                boolean mines = true;
+                boolean finish = true;
                 for (int i = 0; i < 8; i++) { //check if all mines flagged
                     for (int x = 0; x < 8; x++) {
-                        //if((mf.displayField[x][i].equals("Flag"))){
-                        //    flagged++;
-                        // }
-                        if (mf.playField[x][i] == 9 || (mf.playField[x][i] != 9 && (mf.displayField[x][i].equals("Flag")))) {
-                            if (!(mf.displayField[x][i].equals("Flag"))) {
-                                mines = false;
-                            }
-                        }
+                       if(fieldButton[x][i].isEnabled()){
+                           finish = false;
+                       }
 
                     }
                 }
-                if (mines) { //&& flagged == 10
+
+                if(gameInProgress == true && finish == true){
                     wongame();
                 }
             }
@@ -182,8 +180,8 @@ public class minesweeper {
 
         } else if (value == 9) {
             button.setText("Mine");
-            lostgame();
             gameInProgress = false;
+            lostgame();
         } else if (value != 0) {
             button.setText(Integer.toString(value));
             mf.displayField[x][y] = Integer.toString(value);
@@ -301,14 +299,15 @@ public class minesweeper {
 
         Boolean toggle = false;
 
+        ArrayList<Integer[]> clicked = new ArrayList<>();
+
 
         ArrayList<Integer[]> select = new ArrayList<>();
         for (int y = 0; y < 8; y++) { //corner ones
             for (int x = 0; x < 8; x++) {
                 if (currentState[x][y].equals("B") || currentState[x][y].equals("F")) {
                     continue;
-                }
-                if (getSpaceCount(x, y, currentState) == Integer.parseInt(currentState[x][y])
+                } else if (getSpaceCount(x, y, currentState) == Integer.parseInt(currentState[x][y])
                         && (getFlagCount(x, y, currentState) == 0)
                         && Integer.parseInt(currentState[x][y]) != 0) {  //grid with no mines around and open spaces == number
                     select = getSpaceLoc(x, y, currentState);
