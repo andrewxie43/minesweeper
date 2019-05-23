@@ -302,6 +302,7 @@ public class minesweeper {
 
         ArrayList<Integer[]> clicked = new ArrayList<>();
         ArrayList<Integer[]> select = new ArrayList<>();
+        yloop:
         for (int y = 0; y < 8; y++) { //corner ones
             for (int x = 0; x < 8; x++) {
                 if (currentState[x][y].equals("B") || currentState[x][y].equals("F")) {
@@ -317,8 +318,8 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
+                        break yloop;
                     }
-                    break;
 
                 } else if (getFlagCount(x, y, currentState) == Integer.parseInt(currentState[x][y]) //all mines around grid marked
                 ) {
@@ -330,8 +331,8 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
+                        break yloop;
                     }
-                    break;
                 } else if (
                         Integer.parseInt(currentState[x][y]) == getFlagCount(x, y, currentState) + getSpaceCount(x, y, currentState)
                 ) {
@@ -343,8 +344,8 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
+                        break yloop;
                     }
-                    break;
                 }
             }
 
