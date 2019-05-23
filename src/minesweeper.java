@@ -31,8 +31,7 @@ public class minesweeper {
         initGUI();
         initMF();
         JOptionPane.showMessageDialog(null, "Press the Digging/Flagging button to toggle between dig and flag\n " +
-                "The check for winning the game is fixed weirdly (see the Timer in init GUI), likely works for most, if not all, cases.\n" +
-                "Note: Press basic button to engage AI for one rep. AI may glitch out on flags, if so manual flag.",  "Instructions/Warning", JOptionPane.INFORMATION_MESSAGE);
+                "Note: Press basic button to engage AI for one rep. AI may glitch out on flags from duplicates, fix WIP",  "Instructions/Warning", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void initGUI() {
@@ -146,6 +145,9 @@ public class minesweeper {
             @Override
             public void actionPerformed(ActionEvent e) {
                 findBest(getVisible());
+                if (digBool) {
+                    actionButton.doClick();
+                }
             }
 
 
@@ -201,6 +203,7 @@ public class minesweeper {
                             guiDig(fieldButton[x + j][y + k], x + j, y + k);
                         }
                     } catch (IndexOutOfBoundsException e) {
+                        System.out.println("Guidig bound checker on edge");
                     }
                 }
             }
@@ -297,11 +300,7 @@ public class minesweeper {
      */
     public static void findBest(String[][] currentState) { //use to test functions
 
-        Boolean toggle = false;
-
         ArrayList<Integer[]> clicked = new ArrayList<>();
-
-
         ArrayList<Integer[]> select = new ArrayList<>();
         for (int y = 0; y < 8; y++) { //corner ones
             for (int x = 0; x < 8; x++) {
@@ -310,53 +309,46 @@ public class minesweeper {
                 } else if (getSpaceCount(x, y, currentState) == Integer.parseInt(currentState[x][y])
                         && (getFlagCount(x, y, currentState) == 0)
                         && Integer.parseInt(currentState[x][y]) != 0) {  //grid with no mines around and open spaces == number
-                    select = getSpaceLoc(x, y, currentState);
+                    select = removeDups(getSpaceLoc(x, y, currentState));
 
 
                     for (Integer[] i : select) {
                         if (digBool) {
-                            toggle = true;
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
-
-
                     }
+                    break;
 
                 } else if (getFlagCount(x, y, currentState) == Integer.parseInt(currentState[x][y]) //all mines around grid marked
                 ) {
-                    select = getSpaceLoc(x, y, currentState);
+                    select = removeDups(getSpaceLoc(x, y, currentState));
 
 
                     for (Integer[] i : select) {
                         if (flagBool) {
-                            toggle = true;
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
                     }
+                    break;
                 } else if (
                         Integer.parseInt(currentState[x][y]) == getFlagCount(x, y, currentState) + getSpaceCount(x, y, currentState)
                 ) {
-                    select = getSpaceLoc(x, y, currentState);
+                    select = removeDups(getSpaceLoc(x, y, currentState));
 
 
                     for (Integer[] i : select) {
                         if (digBool) {
-                            toggle = true;
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
-
                     }
+                    break;
                 }
             }
 
         }
-        if (toggle) {
-            actionButton.doClick();
-        }
-
     }
 
     public static ArrayList<Integer[]> getSpaceLoc(int x, int y, String[][] currentState) { //get the locations of spaces
@@ -416,5 +408,30 @@ public class minesweeper {
         }
         return number;
     }
+    public static ArrayList<Integer[]> removeDups(ArrayList<Integer[]> f){
+
+        ArrayList<Integer[]> noDup = new ArrayList<Integer[]>();
+        try {
+            noDup.add(f.get(0));
+        } catch(IndexOutOfBoundsException e){
+            System.out.println("removeDups out of bounds!");
+        }
+
+        Boolean dup = false;
+        for(Integer[] i : f ){
+            dup = false;
+            for(Integer[] g : noDup){
+                if(i.equals(g)){
+                    dup = true;
+                }
+            }
+            if(!dup){
+                noDup.add(i);
+            }
+        }
+        return noDup;
+    }
+
+
 }
 
