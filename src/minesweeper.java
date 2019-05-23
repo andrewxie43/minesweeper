@@ -145,7 +145,7 @@ public class minesweeper {
             @Override
             public void actionPerformed(ActionEvent e) {
                 findBest(getVisible());
-                if (digBool) {
+                if(flagBool){
                     actionButton.doClick();
                 }
             }
