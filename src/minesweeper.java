@@ -318,7 +318,7 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
-                        break yloop;
+                        currentState = getVisible();
                     }
 
                 } else if (getFlagCount(x, y, currentState) == Integer.parseInt(currentState[x][y]) //all mines around grid marked
@@ -331,7 +331,7 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
-                        break yloop;
+                        currentState = getVisible();
                     }
                 } else if (
                         Integer.parseInt(currentState[x][y]) == getFlagCount(x, y, currentState) + getSpaceCount(x, y, currentState)
@@ -344,7 +344,7 @@ public class minesweeper {
                             actionButton.doClick();
                         }
                         fieldButton[i[0]][i[1]].doClick();
-                        break yloop;
+                        currentState = getVisible();
                     }
                 }
             }
